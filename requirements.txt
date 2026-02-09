@@ -1,0 +1,26 @@
+# AI Yoga Instructor MVP Dependencies
+# Core web framework
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# Computer vision and pose detection
+opencv-python==4.8.1.78
+mediapipe==0.10.7
+numpy==1.24.3
+
+# Database
+mysql-connector-python==8.0.33
+SQLAlchemy==2.0.21
+
+# Text-to-speech
+pyttsx3==2.90
+
+# Additional utilities
+Pillow==10.0.1
+python-dotenv==1.0.0
+
+# Development and testing
+pytest==7.4.2
+black==23.9.1
+flake8==6.1.0
+
