@@ -137,14 +137,62 @@ class PoseClassifier:
         min_angle, max_angle = range_tuple
         return (min_angle - self.angle_tolerance) <= angle <= (max_angle + self.angle_tolerance)
     
-    def draw_pose_info(self, frame, pose_info: Dict[str, Any]):
-        """Draw pose information overlay on the frame"""
-        pose_name = pose_info.get('pose_name', 'Unknown')
-        accuracy = pose_info.get('accuracy', 0.0)
+
+  
+    def get_correction_feedback(self, pose_name, metrics):
+        """Generate specific feedback to improve pose accuracy"""
+        if pose_name not in self.pose_definitions:
+            return None
+            
+        def_range = self.pose_definitions[pose_name]
+        feedback = []
         
-        cv2.putText(frame, f"Pose: {pose_name}", (10, 60), 
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
-        cv2.putText(frame, f"Acc: {accuracy:.0f}%", (10, 95), 
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 0), 2)
+        # 1. Check Knee Bends (Chair, Goddess)
+        if 'knee_angle_range' in def_range:
+            angle = metrics.get('knee_angle_range', 0)
+            target_min, target_max = def_range['knee_angle_range']
+            
+            if angle > target_max + 10:
+                feedback.append("Bend your knees deeper.")
+            elif angle < target_min - 10:
+                feedback.append("Lift your hips slightly, don't squat too low.")
+
+        # 2. Check Straight Legs (Triangle, Tree, Warrior II back leg)
+        if 'knee_inc_range' in def_range:
+            # We can check the knee joint angle if it exists in metrics
+            # Even if the pose definition relies on inclination, we want the leg straight
+            knee_angle = metrics.get('knee_angle_range', 0) # Average of both or specific
+            
+            # If the pose expects a straight leg, knee angle should be ~180
+            # We allow some flex, but < 160 is definitely bent
+            if knee_angle > 0 and knee_angle < 160:
+                 return "Straighten your standing leg."
+
+        # 3. Check Hips
+        if 'hip_angle_range' in def_range:
+            angle = metrics.get('hip_angle_range', 0)
+            target_min, target_max = def_range['hip_angle_range']
+            
+            # For standing poses (Tree, Mountain), hip angle ~180
+            if target_min > 150: 
+                if angle < target_min - 15:
+                    feedback.append("Stand up straighter, open your hips.")
+            
+            # For bent poses (Chair, Warrior), hip angle ~90
+            elif target_max < 130:
+                if angle > target_max + 15:
+                    feedback.append("Sink your hips lower.")
+
+        # 4. Check Arms (Warrior II, Goddess)
+        if 'elbow_angle_range' in def_range: # Goddess
+            angle = metrics.get('elbow_angle_range', 0)
+            if angle > 130:
+                feedback.append("Bend your elbows more for cactus arms.")
         
-        return frame
+        elif def_range.get('arms_extended', False): # Warrior II
+             # If we had exact elbow angles, we'd check them here
+             pass
+
+        if feedback:
+            return feedback[0] # Return the most critical correction
+        return None

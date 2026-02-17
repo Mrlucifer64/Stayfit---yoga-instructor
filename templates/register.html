@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Register • AI Yoga Instructor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* --- THEME VARIABLES --- */
+:root {
+  /* Default Dark Theme */
+  --bg: #0f172a;
+  --surface: #0b1220;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --accent: #22c55e;
+  --accent-2: #10b981;
+  --danger: #ef4444;
+  --border: rgba(255, 255, 255, 0.08);
+  
+  /* Form Specifics */
+  --card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  --input-bg: rgba(17, 24, 39, 0.6);
+  --input-focus-bg: rgba(17, 24, 39, 0.8);
+}
+
+/* Light Theme Override */
+[data-theme="light"] {
+  --bg: #f8fafc;
+  --surface: #e2e8f0;
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #16a34a;
+  --accent-2: #15803d;
+  --border: rgba(0, 0, 0, 0.1);
+  
+  /* Light Form Specifics */
+  --card-bg: #ffffff;
+  --input-bg: #f1f5f9;
+  --input-focus-bg: #ffffff;
+}
+
+/* Base Reset */
+* { box-sizing: border-box; }
+
+/* --- GLOBAL TRANSITIONS --- */
+body, .card, input, .btn, .theme-toggle, a {
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+html, body {
+  margin: 0; padding: 0; min-height: 100vh;
+  background: linear-gradient(180deg, var(--surface), var(--bg));
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Layout */
+.container {
+  max-width: 1200px; margin: 0 auto; padding: 24px;
+  min-height: 100vh; display: flex; flex-direction: column;
+}
+
+.main {
+  flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 0;
+}
+
+/* Header */
+.header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-logo {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: radial-gradient(100% 100% at 50% 0%, #22c55e 0%, #16a34a 100%);
+  display: grid; place-items: center; color: #04110a; font-weight: 900;
+}
+.brand-title { font-weight: 700; letter-spacing: 0.3px; }
+.subtext { color: var(--muted); font-size: 0.95rem; }
+
+/* Theme Toggle & Actions */
+.right-section { display: flex; align-items: center; gap: 16px; }
+.theme-toggle {
+    background: transparent; border: 1px solid var(--border); color: var(--text);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 1.1rem;
+}
+.theme-toggle:hover { background: rgba(128,128,128,0.1); }
+
+.header-actions a { text-decoration: none; color: var(--muted); font-size: 0.9rem; transition: color 0.2s ease; }
+.header-actions a:hover { color: var(--text); }
+
+/* Form Card */
+.card {
+  width: 100%; max-width: 480px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px; backdrop-filter: blur(8px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.card-inner { padding: 28px 24px 30px; }
+.card-title { margin: 0 0 6px 0; font-size: 1.4rem; font-weight: 700; }
+.card-subtitle { margin: 0 0 24px 0; color: var(--muted); font-size: 0.9rem; }
+
+/* Form Inputs */
+label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+.field { margin-bottom: 16px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+input {
+  width: 100%; padding: 10px 11px; border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text); font-size: 0.95rem; outline: none;
+}
+input::placeholder { color: var(--muted); opacity: 0.7; }
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+  background: var(--input-focus-bg);
+}
+
+/* Remove Number Arrows */
+input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Buttons */
+.btn {
+  appearance: none; border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  color: #052813; font-weight: 600; padding: 10px 14px;
+  border-radius: 10px; cursor: pointer; width: 100%; margin-top: 4px;
+}
+[data-theme="light"] .btn { color: #ffffff; }
+
+.btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.btn:active { transform: translateY(0); }
+.btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+/* Meta & Footer */
+.meta { margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.82rem; color: var(--muted); }
+.meta a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.meta a:hover { text-decoration: underline; }
+
+.footer { margin-top: 20px; color: var(--muted); font-size: 0.9rem; text-align: center; }
+
+/* Media Queries */
+@media (max-width: 980px) {
+  .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .right-section { width: 100%; justify-content: space-between; }
+  .main { padding: 24px 0 8px; }
+  .card { max-width: 100%; }
+  .field-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="header">
+    <div class="brand">
+      <div class="brand-logo">ॐ</div>
+      <div>
+        <div class="brand-title">AI Yoga Instructor</div>
+        <div class="subtext">Start your journey to wellness</div>
+      </div>
+    </div>
+    
+    <div class="right-section">
+      <button class="theme-toggle" id="themeBtn" title="Switch Theme">☀️</button>
+      <div class="header-actions">
+        <a href="/login">Already have an account? Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="card">
+      <div class="card-inner">
+        <h1 class="card-title">Create your account</h1>
+        <p class="card-subtitle">Join us to begin your personalized yoga practice journey.</p>
+
+        <form id="registerForm" method="POST">
+          <div class="field">
+            <label for="username">Username</label>
+            <input id="username" type="text" name="username" autocomplete="username" required placeholder="Choose a username" />
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" autocomplete="email" required placeholder="your.email@example.com" />
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password" autocomplete="new-password" required placeholder="Create a secure password" />
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="age">Age</label>
+              <input id="age" type="number" name="age" min="1" max="120" required placeholder="Age" />
+            </div>
+            <div class="field">
+              <label for="height">Height (cm)</label>
+              <input id="height" type="number" name="height" min="50" max="250" required placeholder="Height" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="weight">Weight (kg)</label>
+            <input id="weight" type="number" name="weight" min="10" max="300" required placeholder="Weight in kilograms" />
+          </div>
+
+          <button class="btn" type="submit">Create account</button>
+          <p id="errorMsg" style="color:var(--danger);font-size:.85rem;margin-top:10px;"></p>
+
+          <div class="meta">
+            <span>Already registered?</span>
+            <a href="/login">Sign in here</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Made with care • Breathe in, breathe out</div>
+</div>
+
+<script>
+// --- THEME LOGIC ---
+const themeBtn = document.getElementById('themeBtn');
+const htmlEl = document.documentElement;
+const savedTheme = localStorage.getItem('theme');
+
+if (savedTheme) {
+    htmlEl.setAttribute('data-theme', savedTheme);
+    updateIcon(savedTheme);
+}
+
+function updateIcon(theme) {
+    if (themeBtn) themeBtn.textContent = theme === 'light' ? '🌙' : '☀️';
+}
+
+if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+        const current = htmlEl.getAttribute('data-theme');
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        htmlEl.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateIcon(newTheme);
+    });
+}
+
+// --- REGISTER LOGIC ---
+const form = document.getElementById("registerForm");
+const errorMsg = document.getElementById("errorMsg");
+const submitBtn = form.querySelector("button");
+
+let registerState = { loading: false };
+
+function lockForm() {
+    registerState.loading = true;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Creating account...";
+}
+
+function unlockForm() {
+    registerState.loading = false;
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Create account";
+}
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (registerState.loading) return;
+
+    errorMsg.textContent = "";
+
+    const data = {
+        username: document.getElementById("username").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value,
+        age: Number(document.getElementById("age").value),
+        height: Number(document.getElementById("height").value),
+        weight: Number(document.getElementById("weight").value)
+    };
+
+    if (!data.username || !data.email || !data.password) {
+        errorMsg.textContent = "Please fill all required fields.";
+        return;
+    }
+
+    lockForm();
+
+    try {
+        const res = await fetch("/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json().catch(() => null);
+
+        if (!res.ok || !result || result.status !== "success") {
+            errorMsg.textContent = result?.message || result?.error || "Registration failed.";
+            unlockForm();
+            return;
+        }
+
+        window.location.href = "/login";
+
+    } catch (err) {
+        console.error(err);
+        errorMsg.textContent = "Network error. Please try again.";
+        unlockForm();
+    }
+});
+</script>
+
+</body>
+</html>

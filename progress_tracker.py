@@ -131,27 +131,100 @@ class ProgressTracker:
         # If no active session found, try to make one (careful of recursion)
         return self.start_session(user_id)
 
-    # ---------------- CLOSE SESSION ---------------- #
 
-    def close_session(self, user_id: int, session_id: Optional[int] = None):
+    def update_user_progress_summary(self, user_id):
+        """Aggregates all-time stats into the user_progress table for today"""
         conn = self._get_connection()
         if not conn: return
-
+        
         try:
             with conn.cursor() as cursor:
-                if not session_id:
-                    # Logic inside _get_current_session_id handles connection itself
-                    # so we don't call it here to avoid complexity, just update latest
-                    cursor.execute("""
-                        UPDATE yoga_sessions SET session_end = NOW()
-                        WHERE user_id = %s AND session_end IS NULL
-                    """, (user_id,))
-                else:
-                    cursor.execute("""
-                        UPDATE yoga_sessions SET session_end = NOW()
-                        WHERE id = %s AND user_id = %s
-                    """, (session_id, user_id))
+                # Calculate daily stats
+                cursor.execute("""
+                    SELECT 
+                        SUM(total_duration_seconds) as total_time,
+                        SUM(poses_completed) as total_poses,
+                        AVG(average_accuracy) as daily_avg
+                    FROM yoga_sessions
+                    WHERE user_id = %s AND DATE(session_start) = CURRENT_DATE
+                """, (user_id,))
+                
+                stats = cursor.fetchone()
+                if not stats or stats[0] is None: return
+
+                total_time = stats[0]
+                total_poses = stats[1]
+                daily_accuracy = stats[2]
+                
+                # Insert or Update (Upsert) for today
+                cursor.execute("""
+                    INSERT INTO user_progress 
+                    (user_id, log_date, total_practice_time_seconds, poses_practiced, improvement_score)
+                    VALUES (%s, CURRENT_DATE, %s, %s, %s)
+                    ON DUPLICATE KEY UPDATE
+                    total_practice_time_seconds = VALUES(total_practice_time_seconds),
+                    poses_practiced = VALUES(poses_practiced),
+                    improvement_score = VALUES(improvement_score)
+                """, (user_id, total_time, total_poses, daily_accuracy))
+                
         except Exception as e:
-            print(f"Close Session Error: {e}")
+            print(f"Error updating user progress: {e}")
+        finally:
+            conn.close()
+    
+    # ---------------- CLOSE SESSION ---------------- #
+
+    def close_session(self, user_id):
+        """End the session and calculate summary stats from the logs"""
+        conn = self._get_connection()
+        if not conn: return
+        
+        try:
+            with conn.cursor() as cursor:
+                # 1. Get the current active session ID
+                cursor.execute("""
+                    SELECT id, session_start FROM yoga_sessions 
+                    WHERE user_id = %s AND session_end IS NULL 
+                    ORDER BY session_start DESC LIMIT 1
+                """, (user_id,))
+                
+                session = cursor.fetchone()
+                if not session: return # No active session to close
+                
+                session_id = session[0]
+                start_time = session[1]
+                
+                # 2. Calculate Stats from Pose Logs
+                cursor.execute("""
+                    SELECT 
+                        COUNT(*) as pose_count, 
+                        IFNULL(AVG(accuracy_score), 0) as avg_acc 
+                    FROM pose_logs 
+                    WHERE session_id = %s
+                """, (session_id,))
+                
+                stats = cursor.fetchone()
+                poses_completed = stats[0]
+                avg_accuracy = stats[1]
+                
+                # 3. Calculate Duration (Now - Start Time)
+                # We do this in Python to be precise, or let MySQL do it with TIMESTAMPDIFF
+                
+                # 4. Update the Session Record
+                cursor.execute("""
+                    UPDATE yoga_sessions 
+                    SET 
+                        session_end = CURRENT_TIMESTAMP,
+                        total_duration_seconds = TIMESTAMPDIFF(SECOND, session_start, CURRENT_TIMESTAMP),
+                        poses_completed = %s,
+                        average_accuracy = %s
+                    WHERE id = %s
+                """, (poses_completed, avg_accuracy, session_id))
+                
+                # 5. Trigger User Progress Update (See Step 3 below)
+                self.update_user_progress_summary(user_id)
+                
+        except Exception as e:
+            print(f"Error closing session: {e}")
         finally:
             conn.close()

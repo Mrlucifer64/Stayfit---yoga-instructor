@@ -8,8 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* Variables */
+/* --- THEME VARIABLES --- */
 :root {
+  /* Default Dark Theme */
   --bg: #0f172a;
   --card: #111827;
   --muted: #94a3b8;
@@ -18,449 +19,400 @@
   --accent-2: #10b981;
   --danger: #ef4444;
   --surface: #0b1220;
-  --ring: #1f2937;
+  --border: rgba(255, 255, 255, 0.08);
+  --chip-bg: rgba(31, 41, 55, 0.6);
+  --overlay-bg: rgba(2, 6, 23, 0.75);
+  --stat-bg: rgba(128, 128, 128, 0.05);
 }
 
-/* Base Reset */
-* {
-  box-sizing: border-box;
+/* Light Theme Override */
+[data-theme="light"] {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --muted: #64748b;
+  --text: #0f172a;
+  --accent: #16a34a;
+  --accent-2: #15803d;
+  --surface: #e2e8f0;
+  --border: rgba(0, 0, 0, 0.1);
+  --chip-bg: rgba(255, 255, 255, 0.9);
+  --overlay-bg: rgba(255, 255, 255, 0.85);
+  --stat-bg: #f1f5f9;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(180deg, var(--surface), #020617);
+* { box-sizing: border-box; }
+
+/* --- GLOBAL TRANSITIONS (0.3s Delay) --- */
+body, .card, .stat, .chip, .btn, .table th, .table td, .theme-toggle, .overlay-bar {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+html, body {
+  margin: 0; padding: 0;
+  background: linear-gradient(180deg, var(--surface), var(--bg));
   color: var(--text);
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-family: Inter, sans-serif;
+  min-height: 100vh;
 }
 
-/* Layout */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
-}
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 20px;
-  margin-top: 20px;
-}
-
-/* Brand & Typography */
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
+/* Brand */
+.brand { display: flex; align-items: center; gap: 12px; }
 .brand-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 40px; height: 40px; border-radius: 10px;
   background: radial-gradient(100% 100% at 50% 0%, #22c55e 0%, #16a34a 100%);
-  display: grid;
-  place-items: center;
-  color: #04110a;
-  font-weight: 900;
+  display: grid; place-items: center; color: #04110a; font-weight: 900;
 }
+.brand-title { font-weight: 700; letter-spacing: 0.3px; }
+.subtext { color: var(--muted); font-size: 0.95rem; }
 
-.brand-title {
-  font-weight: 700;
-  letter-spacing: 0.3px;
+/* Theme Toggle Button */
+.theme-toggle {
+    background: transparent; border: 1px solid var(--border); color: var(--text);
+    width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 1.2rem; margin-right: 12px;
 }
+.theme-toggle:hover { background: rgba(128,128,128,0.1); }
 
-.subtext {
-  color: var(--muted);
-  font-size: 0.95rem;
-}
+/* Grid Layout */
+.grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
 
-.section-title {
-  margin: 0 0 12px 0;
-  font-size: 1.05rem;
-  color: var(--muted);
-  font-weight: 600;
-}
-
-/* Cards & Containers */
+/* Cards */
 .card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 16px;
-  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
+.card-inner { padding: 20px; }
+.section-title { margin: 0 0 12px 0; font-size: 1.05rem; color: var(--muted); font-weight: 600; }
 
-.card-inner {
-  padding: 16px;
-}
-
-/* Video & Media */
-.video-wrap {
-  position: relative;
-  border-radius: 14px;
-  overflow: hidden;
-}
-
-#video {
-  width: 100%;
-  display: block;
-  background: #000;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border: 0;
-}
+/* Video Area */
+.video-wrap { position: relative; border-radius: 14px; overflow: hidden; background: #000; aspect-ratio: 16/9; }
+#video { width: 100%; height: 100%; object-fit: contain; display: block; }
 
 .overlay-bar {
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  background: rgba(2, 6, 23, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(6px);
-  border-radius: 12px;
+  position: absolute; left: 12px; right: 12px; bottom: 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; background: var(--overlay-bg);
+  border: 1px solid var(--border); backdrop-filter: blur(6px); border-radius: 12px;
 }
 
-/* UI Components (Chips & Stats) */
-.metrics {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
+.metrics { display: flex; gap: 10px; }
 .chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(31, 41, 55, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 0.9rem;
+  display: flex; align-items: center; gap: 8px; padding: 6px 12px;
+  border-radius: 999px; background: var(--chip-bg); color: var(--text);
+  border: 1px solid var(--border); font-size: 0.9rem; font-weight: 500;
 }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
 
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 0 12px var(--accent);
-}
+/* Stats & Table */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.stat { padding: 14px; border-radius: 12px; background: var(--stat-bg); border: 1px solid var(--border); }
+.stat-label { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.stat-value { font-size: 1.3rem; font-weight: 700; margin-top: 6px; }
 
-.timer {
-  font-variant-numeric: tabular-nums;
-}
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.stat {
-  padding: 12px;
-  border-radius: 12px;
-  background: rgba(2, 6, 23, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.stat-label {
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-.stat-value {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-top: 6px;
-}
+.progress-list { margin-top: 10px; max-height: 360px; overflow: auto; border-radius: 12px; border: 1px solid var(--border); }
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+.table th { color: var(--muted); font-weight: 600; background: var(--stat-bg); font-size: 0.9rem; position: sticky; top: 0; }
+.table tr:hover td { background: var(--stat-bg); }
 
 /* Buttons */
-.controls {
-  display: flex;
-  gap: 10px;
-}
-
+.controls { display: flex; gap: 10px; align-items: center; }
 .btn {
-  appearance: none;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(17, 24, 39, 0.8);
-  color: var(--text);
-  padding: 10px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 600;
+  border: 1px solid var(--border); background: rgba(128, 128, 128, 0.1); color: var(--text);
+  padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; text-decoration: none;
+  display: inline-flex; align-items: center;
 }
+.btn:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.1); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-primary { background: var(--accent); border: 0; color: #022c22; }
+[data-theme="light"] .btn-primary { color: #ffffff; }
+.btn-danger { background: var(--danger); border: 0; color: #ffffff; }
 
-.btn:hover {
-  transform: translateY(-1px);
-  background: rgba(17, 24, 39, 0.95);
-}
-
-.btn:active {
-  transform: translateY(0);
-}
-
-.btn-primary {
-  background: linear-gradient(180deg, var(--accent), var(--accent-2));
-  border: 0;
-  color: #052813;
-}
-
-.btn-danger {
-  background: linear-gradient(180deg, #ef4444, #dc2626);
-  border: 0;
-  color: #2a0a0a;
-}
-
-/* Tables & Lists */
-.progress-list {
-  margin-top: 10px;
-  max-height: 360px;
-  overflow: auto;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th,
-.table td {
-  padding: 10px 12px;
-  text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.table th {
-  color: var(--muted);
-  font-weight: 600;
-  background: rgba(2, 6, 23, 0.6);
-}
-
-.table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-/* Toasts & Feedback */
+/* Toast */
 .toast {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  background: rgba(2, 6, 23, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(6px);
-  color: var(--text);
-  padding: 10px 12px;
-  border-radius: 10px;
-  opacity: 0;
-  transform: translateY(-8px);
-  transition: all 0.2s ease;
+  position: fixed; top: 24px; right: 24px; background: var(--card); color: var(--text);
+  border: 1px solid var(--border); padding: 12px 16px; border-radius: 10px;
+  opacity: 0; transform: translateY(-10px); transition: all 0.2s ease; z-index: 1000;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
+.toast.show { opacity: 1; transform: translateY(0); }
 
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
-}
+.footer { margin-top: 30px; color: var(--muted); font-size: 0.9rem; text-align: center; }
 
-/* Footer */
-.footer {
-  margin-top: 20px;
-  color: var(--muted);
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-/* Responsive Design */
-@media (max-width: 980px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .controls {
-    width: 100%;
-  }
-  
-  .btn {
-    flex: 1;
-  }
-}
+@media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
 </style>
 </head>
-<body>
+<body data-logged-in="{{ 'true' if logged_in else 'false' }}">
+
 <div class="container">
-<div class="header">
-<div class="brand">
-<div class="brand-logo">ॐ</div>
-<div>
-<div class="brand-title">AI Yoga Instructor</div>
-<div class="subtext">Real-time posture coaching with live feedback</div>
-</div>
-</div>
-<div class="controls">
-<button class="btn btn-primary" id="startBtn">Start Session</button>
-<button class="btn btn-danger" id="endBtn">End Session</button>
-</div>
-</div>
+  <div class="header">
+    <div class="brand">
+      <div class="brand-logo">ॐ</div>
+      <div>
+        <div class="brand-title">AI Yoga Instructor</div>
+        <div class="subtext">Real-time posture coaching</div>
+      </div>
+    </div>
+    
+    <div style="display: flex; align-items: center;">
+      <button class="theme-toggle" id="themeBtn" title="Switch Theme">☀️</button>
+      <div class="controls">
+        {% if logged_in %}
+          <button class="btn btn-primary" id="startBtn">Start Session</button>
+          <button class="btn btn-danger" id="endBtn" disabled>End Session</button>
+          <a href="/logout" class="btn">Logout</a>
+        {% else %}
+          <a href="/login" class="btn btn-primary">Login</a>
+          <a href="/register" class="btn">Register</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 
-<div class="grid">
-<div class="card video-wrap">
-<img id="video" src="/video_feed" alt="Live video stream" />
-<div class="overlay-bar">
-<div class="metrics">
-<div class="chip"><span class="dot"></span><span id="poseLabel">Waiting for pose...</span></div>
-<div class="chip timer">Hold <span id="timer">0.0</span>s</div>
-</div>
-<div class="controls">
-<button class="btn" id="refreshBtn">Refresh Feed</button>
-</div>
-</div>
-</div>
+  <div class="grid">
+    <div class="card video-wrap">
+      <img id="video" src="{{ url_for('static', filename='placeholder.jpg') }}" alt="Feed">
+      <div class="overlay-bar">
+        <div class="metrics">
+          <div class="chip">
+            <span class="dot"></span>
+            <span id="poseLabel">Waiting...</span>
+          </div>
+          <div class="chip">
+            Hold <span id="timer" style="margin-left:4px">0.0</span>s
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="refreshBtn" style="font-size:0.8rem; padding:6px 12px;">Refresh Feed</button>
+        </div>
+      </div>
+    </div>
 
-<div class="card">
-<div class="card-inner">
-<div class="section-title">Session Stats</div>
-<div class="stat-grid">
-<div class="stat"><div class="stat-label">Current Pose</div><div class="stat-value" id="statPose">—</div></div>
-<div class="stat"><div class="stat-label">Hold Duration</div><div class="stat-value" id="statDuration">0.0 s</div></div>
-</div>
-<div class="section-title" style="margin-top:14px">Progress</div>
-<div class="progress-list">
-<table class="table" id="progressTable">
-<thead><tr><th>Pose</th><th>Total Time (s)</th><th>Accuracy (%)</th><th>Updated</th></tr></thead>
-<tbody id="progressBody"><tr><td colspan="4" style="color:var(--muted)">No data yet</td></tr></tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
+    <div class="card">
+      <div class="card-inner">
+        <div class="section-title">Session Stats</div>
+        <div class="stat-grid">
+          <div class="stat">
+            <div class="stat-label">Current Pose</div>
+            <div class="stat-value" id="statPose">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Hold Duration</div>
+            <div class="stat-value" id="statDuration">0.0 s</div>
+          </div>
+        </div>
 
-<div class="footer">Made with care • Breathe in, breathe out</div>
-</div>
+        <div class="section-title" style="margin-top:20px">Progress</div>
+        <div class="progress-list">
+          <table class="table" id="progressTable">
+            <thead>
+              <tr><th>Pose</th><th>Time</th><th>Acc</th><th>When</th></tr>
+            </thead>
+            <tbody id="progressBody">
+              <tr><td colspan="4" style="color:var(--muted); text-align:center;">No data yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <div class="footer">Made with care • Breathe in, breathe out</div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
+// --- UI Elements ---
+const videoEl = document.getElementById('video');
+const startBtn = document.getElementById('startBtn');
+const endBtn = document.getElementById('endBtn');
+const refreshBtn = document.getElementById('refreshBtn');
 const poseLabel = document.getElementById('poseLabel');
 const timerEl = document.getElementById('timer');
 const statPose = document.getElementById('statPose');
 const statDuration = document.getElementById('statDuration');
 const progressBody = document.getElementById('progressBody');
 const toast = document.getElementById('toast');
-const startBtn = document.getElementById('startBtn');
-const endBtn = document.getElementById('endBtn');
-const refreshBtn = document.getElementById('refreshBtn');
+const themeBtn = document.getElementById('themeBtn');
 
-function showToast(message) {
-    toast.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2200);
+const isLoggedIn = document.body.dataset.loggedIn === 'true';
+let pollInterval = null;
+
+// --- THEME LOGIC ---
+const htmlEl = document.documentElement;
+const savedTheme = localStorage.getItem('theme');
+
+if (savedTheme) {
+    htmlEl.setAttribute('data-theme', savedTheme);
+    updateIcon(savedTheme);
 }
 
-// Optimized Fetch for your app.py endpoints
-async function safeFetch(url, opts = {}) {
-    try {
-        const res = await fetch(url, opts);
-        return await res.json();
-    } catch (e) {
-        console.error('Fetch error:', e);
-        return null;
-    }
+function updateIcon(theme) {
+    themeBtn.textContent = theme === 'light' ? '🌙' : '☀️';
 }
 
-// Updates Real-time Metrics from /api/pose_info
-async function updatePoseInfo() {
-    const data = await safeFetch('/api/pose_info');
-    if (!data) return;
-
-    // Mapping from app.py: current_pose and duration
-    const pose = data.current_pose || 'Unknown';
-    const dur = data.duration || 0;
-
-    poseLabel.textContent = `Pose: ${pose}`;
-    timerEl.textContent = Number(dur).toFixed(1);
-    statPose.textContent = pose;
-    statDuration.textContent = `${Number(dur).toFixed(1)} s`;
-}
-
-// Renders the database logs from progress_tracker.py
-function renderProgressRowsFromData(response) {
-    let rowsHtml = '';
-    // Checks if the response follows your progress_tracker.get_user_progress() format
-    const items = (response && response.status === 'success') ? response.data : [];
-
-    if (!items || items.length === 0) {
-        progressBody.innerHTML = '<tr><td colspan="4" style="color:var(--muted)">No data yet</td></tr>';
-        return;
-    }
-
-    items.forEach((it) => {
-        const pose = it.pose_name || '—';
-        const seconds = it.duration_held_seconds || 0;
-        const acc = (it.accuracy_score * 100).toFixed(0);
-        // Format timestamp for readability
-        const updated = it.session_start ? new Date(it.session_start).toLocaleTimeString() : 'Recent';
-        
-        rowsHtml += `<tr>
-            <td>${pose}</td>
-            <td>${Number(seconds).toFixed(1)}</td>
-            <td>${acc}%</td>
-            <td>${updated}</td>
-        </tr>`;
+if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+        const current = htmlEl.getAttribute('data-theme');
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        htmlEl.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateIcon(newTheme);
     });
-    progressBody.innerHTML = rowsHtml;
+}
+
+// --- VOICE ENGINE (Queue System) ---
+const synth = window.speechSynthesis;
+let voiceQueue = [];
+let isSpeaking = false;
+let lastSpokenText = "";
+let voices = [];
+
+function loadVoices() { voices = synth.getVoices(); }
+loadVoices();
+if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function processQueue() {
+    if (isSpeaking || voiceQueue.length === 0) return;
+
+    const text = voiceQueue.shift();
+    isSpeaking = true;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.9;
+    const preferred = voices.find(v => v.name.includes('Female') || v.name.includes('Google US English'));
+    if (preferred) utterance.voice = preferred;
+
+    utterance.onend = () => {
+        isSpeaking = false;
+        setTimeout(processQueue, 300);
+    };
+    utterance.onerror = () => { isSpeaking = false; processQueue(); };
+
+    synth.speak(utterance);
+}
+
+function speakText(text, priority = false) {
+    if (!text || text === lastSpokenText) return;
+
+    if (priority) {
+        synth.cancel();
+        voiceQueue = [text];
+        isSpeaking = false;
+        processQueue();
+    } else {
+        voiceQueue.push(text);
+        processQueue();
+    }
+    lastSpokenText = text;
+    setTimeout(() => { lastSpokenText = ""; }, 4000);
+}
+
+// --- HELPERS ---
+function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+async function safeFetch(url) {
+    try {
+        const res = await fetch(url);
+        if (res.status === 401) { window.location.href = '/login'; return null; }
+        return await res.json();
+    } catch (err) { return null; }
+}
+
+// --- CORE LOGIC ---
+if (isLoggedIn) {
+  if (startBtn) {
+    startBtn.addEventListener('click', async () => {
+      startBtn.disabled = true; 
+      const res = await safeFetch('/api/start_session');
+      if (res && res.ok) {
+        showToast('Session Started');
+        videoEl.src = "/video_feed";
+        endBtn.disabled = false;
+        if (!pollInterval) pollInterval = setInterval(updateStats, 1000);
+      } else {
+        showToast(res?.message || 'Error starting session');
+        startBtn.disabled = false; 
+      }
+    });
+  }
+
+  if (endBtn) {
+    endBtn.addEventListener('click', async () => {
+      endBtn.disabled = true;
+      const res = await safeFetch('/api/end_session');
+      if (res && res.ok) {
+        showToast('Session Ended');
+        speakText("Wonderful work today. Namaste.", true);
+        videoEl.src = "{{ url_for('static', filename='placeholder.jpg') }}";
+        startBtn.disabled = false;
+        if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+        poseLabel.textContent = "Session Ended";
+        timerEl.textContent = "0.0";
+        refreshProgress();
+      } else {
+        endBtn.disabled = false;
+      }
+    });
+  }
+
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', () => {
+      if (videoEl.src.includes('placeholder')) {
+        showToast("Start a session first");
+        return;
+      }
+      const src = videoEl.src.split('?')[0];
+      videoEl.src = src + '?ts=' + Date.now();
+      showToast('Feed refreshed');
+    });
+  }
+  refreshProgress();
+}
+
+async function updateStats() {
+  const res = await safeFetch('/api/pose_info');
+  if (res && res.ok) {
+    const data = res.data;
+    poseLabel.textContent = data.current_pose || 'Waiting...';
+    statPose.textContent = data.current_pose || '—';
+    timerEl.textContent = (data.duration || 0.0).toFixed(1);
+    statDuration.textContent = (data.duration || 0.0).toFixed(1) + " s";
+    if (data.voice) speakText(data.voice, false);
+  }
 }
 
 async function refreshProgress() {
-    const data = await safeFetch('/api/progress');
-    if (data) renderProgressRowsFromData(data);
+  const res = await safeFetch('/api/progress');
+  if (res && res.ok) {
+    const data = res.data;
+    if (Array.isArray(data)) {
+        let html = '';
+        data.forEach(it => {
+            html += `<tr>
+                <td>${it.pose_name || '-'}</td>
+                <td>${Number(it.duration_held_seconds||0).toFixed(1)}</td>
+                <td>${Math.round(it.accuracy_score||0)}%</td>
+                <td>${it.session_start ? new Date(it.session_start).toLocaleTimeString() : 'Recent'}</td>
+            </tr>`;
+        });
+        progressBody.innerHTML = html || '<tr><td colspan="4" style="color:var(--muted);text-align:center">No data yet</td></tr>';
+    } else {
+        progressBody.innerHTML = `<tr><td colspan="4">Sessions: ${data.sessions}, Avg Acc: ${data.accuracy}%</td></tr>`;
+    }
+  }
 }
-
-// Button Listeners connecting to app.py Routes
-startBtn.addEventListener('click', async () => {
-    const res = await safeFetch('/api/start_session');
-    if (res && res.status === 'success') {
-        showToast('Session started - Welcome!');
-    } else {
-        showToast(res?.message || 'Session already active');
-    }
-});
-
-endBtn.addEventListener('click', async () => {
-    const res = await safeFetch('/api/end_session');
-    if (res && res.status === 'success') {
-        showToast('Session ended - Namaste!');
-        refreshProgress(); // Refresh table from MySQL
-    } else {
-        showToast(res?.message || 'No active session');
-    }
-});
-
-refreshBtn.addEventListener('click', () => {
-    const img = document.getElementById('video');
-    img.src = '/video_feed?ts=' + Date.now();
-    showToast('Feed refreshed');
-});
-
-// Initialization
-updatePoseInfo();
-refreshProgress();
-setInterval(updatePoseInfo, 1000); // Poll every 1 second
 </script>
 </body>
 </html>
