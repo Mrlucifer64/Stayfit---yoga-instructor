@@ -8,9 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- THEME VARIABLES --- */
         :root {
-            /* Default Dark Theme */
             --bg: #020617;
             --surface: #0b1220;
             --text: #e5e7eb;
@@ -19,15 +17,12 @@
             --accent-2: #10b981;
             --danger: #ef4444;
             --border: rgba(255, 255, 255, 0.08);
-            
-            /* Specific to Login Page Look */
             --card-bg: linear-gradient(180deg, rgba(255,255,255,.06), rgba(15,23,42,.9));
             --input-bg: rgba(15,23,42,.9);
             --input-border: rgba(148,163,184,.45);
             --shadow: 0 18px 45px rgba(15,23,42,.75);
         }
 
-        /* Light Theme Override */
         [data-theme="light"] {
             --bg: #f8fafc;
             --surface: #e2e8f0;
@@ -36,8 +31,6 @@
             --accent: #16a34a;
             --accent-2: #15803d;
             --border: rgba(0, 0, 0, 0.1);
-            
-            /* Light Card Style */
             --card-bg: #ffffff;
             --input-bg: #ffffff;
             --input-border: rgba(0, 0, 0, 0.15);
@@ -46,7 +39,6 @@
 
         * { box-sizing: border-box; }
 
-        /* --- GLOBAL TRANSITIONS --- */
         body, .card, input, .btn, .theme-toggle, a {
             transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
         }
@@ -75,7 +67,6 @@
         .brand-title { font-weight: 700; letter-spacing: .3px; }
         .subtext { color: var(--muted); font-size: .95rem; }
 
-        /* Theme Toggle & Header Actions */
         .right-section { display: flex; align-items: center; gap: 16px; }
         
         .theme-toggle {
@@ -198,12 +189,10 @@
     </div>
 
     <script>
-    // --- THEME LOGIC ---
     const themeBtn = document.getElementById('themeBtn');
     const htmlEl = document.documentElement;
     const savedTheme = localStorage.getItem('theme');
 
-    // Apply saved theme immediately
     if (savedTheme) {
         htmlEl.setAttribute('data-theme', savedTheme);
         updateIcon(savedTheme);
@@ -224,7 +213,6 @@
         });
     }
 
-    // --- LOGIN LOGIC ---
     const form = document.getElementById("loginForm");
     const errorMsg = document.getElementById("errorMsg");
     const submitBtn = form.querySelector("button");
@@ -273,7 +261,6 @@
                 return;
             }
 
-            // Success
             window.location.href = "/";
 
         } catch (err) {

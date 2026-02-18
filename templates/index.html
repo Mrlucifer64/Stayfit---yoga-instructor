@@ -8,9 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* --- THEME VARIABLES --- */
 :root {
-  /* Default Dark Theme */
   --bg: #0f172a;
   --card: #111827;
   --muted: #94a3b8;
@@ -25,7 +23,6 @@
   --stat-bg: rgba(128, 128, 128, 0.05);
 }
 
-/* Light Theme Override */
 [data-theme="light"] {
   --bg: #f8fafc;
   --card: #ffffff;
@@ -42,7 +39,6 @@
 
 * { box-sizing: border-box; }
 
-/* --- GLOBAL TRANSITIONS (0.3s Delay) --- */
 body, .card, .stat, .chip, .btn, .table th, .table td, .theme-toggle, .overlay-bar {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -58,7 +54,6 @@ html, body {
 .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
 .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
 
-/* Brand */
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand-logo {
   width: 40px; height: 40px; border-radius: 10px;
@@ -68,7 +63,6 @@ html, body {
 .brand-title { font-weight: 700; letter-spacing: 0.3px; }
 .subtext { color: var(--muted); font-size: 0.95rem; }
 
-/* Theme Toggle Button */
 .theme-toggle {
     background: transparent; border: 1px solid var(--border); color: var(--text);
     width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
@@ -76,10 +70,8 @@ html, body {
 }
 .theme-toggle:hover { background: rgba(128,128,128,0.1); }
 
-/* Grid Layout */
 .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
 
-/* Cards */
 .card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -89,7 +81,6 @@ html, body {
 .card-inner { padding: 20px; }
 .section-title { margin: 0 0 12px 0; font-size: 1.05rem; color: var(--muted); font-weight: 600; }
 
-/* Video Area */
 .video-wrap { position: relative; border-radius: 14px; overflow: hidden; background: #000; aspect-ratio: 16/9; }
 #video { width: 100%; height: 100%; object-fit: contain; display: block; }
 
@@ -108,7 +99,6 @@ html, body {
 }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
 
-/* Stats & Table */
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .stat { padding: 14px; border-radius: 12px; background: var(--stat-bg); border: 1px solid var(--border); }
 .stat-label { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -120,7 +110,6 @@ html, body {
 .table th { color: var(--muted); font-weight: 600; background: var(--stat-bg); font-size: 0.9rem; position: sticky; top: 0; }
 .table tr:hover td { background: var(--stat-bg); }
 
-/* Buttons */
 .controls { display: flex; gap: 10px; align-items: center; }
 .btn {
   border: 1px solid var(--border); background: rgba(128, 128, 128, 0.1); color: var(--text);
@@ -133,7 +122,6 @@ html, body {
 [data-theme="light"] .btn-primary { color: #ffffff; }
 .btn-danger { background: var(--danger); border: 0; color: #ffffff; }
 
-/* Toast */
 .toast {
   position: fixed; top: 24px; right: 24px; background: var(--card); color: var(--text);
   border: 1px solid var(--border); padding: 12px 16px; border-radius: 10px;
@@ -227,7 +215,6 @@ html, body {
 <div class="toast" id="toast"></div>
 
 <script>
-// --- UI Elements ---
 const videoEl = document.getElementById('video');
 const startBtn = document.getElementById('startBtn');
 const endBtn = document.getElementById('endBtn');
@@ -243,7 +230,6 @@ const themeBtn = document.getElementById('themeBtn');
 const isLoggedIn = document.body.dataset.loggedIn === 'true';
 let pollInterval = null;
 
-// --- THEME LOGIC ---
 const htmlEl = document.documentElement;
 const savedTheme = localStorage.getItem('theme');
 
@@ -266,7 +252,6 @@ if (themeBtn) {
     });
 }
 
-// --- VOICE ENGINE (Queue System) ---
 const synth = window.speechSynthesis;
 let voiceQueue = [];
 let isSpeaking = false;
@@ -315,7 +300,6 @@ function speakText(text, priority = false) {
     setTimeout(() => { lastSpokenText = ""; }, 4000);
 }
 
-// --- HELPERS ---
 function showToast(msg) {
     toast.textContent = msg;
     toast.classList.add('show');
@@ -330,7 +314,6 @@ async function safeFetch(url) {
     } catch (err) { return null; }
 }
 
-// --- CORE LOGIC ---
 if (isLoggedIn) {
   if (startBtn) {
     startBtn.addEventListener('click', async () => {
