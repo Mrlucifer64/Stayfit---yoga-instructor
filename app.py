@@ -1,5 +1,5 @@
 """
-AI Yoga Instructor - Final Production Version
+AI Yoga Instructor - Final Version
 """
 from __future__ import annotations
 import cv2

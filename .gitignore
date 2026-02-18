@@ -1,0 +1,11 @@
+#secrets
+.env
+
+# Virtual Environment
+venv311/
+env/
+.venv311/
+
+#database schema
+schema.sql
+changes.sql

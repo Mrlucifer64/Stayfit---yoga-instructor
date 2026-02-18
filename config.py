@@ -32,21 +32,21 @@ class Config:
     CAMERA_FPS = int(os.getenv('CAMERA_FPS', '30'))
     
     # Pose detection configuration
-    POSE_DETECTION_CONFIDENCE = float(os.getenv('POSE_DETECTION_CONFIDENCE', '0.5'))
-    POSE_TRACKING_CONFIDENCE = float(os.getenv('POSE_TRACKING_CONFIDENCE', '0.5'))
-    POSE_MODEL_COMPLEXITY = int(os.getenv('POSE_MODEL_COMPLEXITY', '1'))  # 0=Lite, 1=Full, 2=Heavy
+    POSE_DETECTION_CONFIDENCE = float(os.getenv('POSE_DETECTION_CONFIDENCE', '0.7'))
+    POSE_TRACKING_CONFIDENCE = float(os.getenv('POSE_TRACKING_CONFIDENCE', '0.7'))
+    POSE_MODEL_COMPLEXITY = int(os.getenv('POSE_MODEL_COMPLEXITY', '2'))  # 0=Lite, 1=Full, 2=Heavy
     
     # Voice feedback configuration
     VOICE_ENABLED = os.getenv('VOICE_ENABLED', 'True').lower() == 'true'
-    VOICE_RATE = int(os.getenv('VOICE_RATE', '150'))  # Words per minute
-    VOICE_VOLUME = float(os.getenv('VOICE_VOLUME', '0.8'))  # 0.0 to 1.0
+    VOICE_RATE = int(os.getenv('VOICE_RATE', '200'))  # Words per minute
+    VOICE_VOLUME = float(os.getenv('VOICE_VOLUME', '1.0'))  # 0.0 to 1.0
     
     # Session configuration
     DEFAULT_POSE_DURATION = int(os.getenv('DEFAULT_POSE_DURATION', '30'))  # seconds
     SESSION_TIMEOUT = int(os.getenv('SESSION_TIMEOUT', '3600'))  # seconds
     
     # UI configuration
-    REFRESH_RATE = int(os.getenv('REFRESH_RATE', '1000'))  # milliseconds
+    REFRESH_RATE = int(os.getenv('REFRESH_RATE', '3000'))  # milliseconds
     MAX_POSE_HISTORY = int(os.getenv('MAX_POSE_HISTORY', '100'))
     
     # Development configuration

@@ -1,10 +1,13 @@
 """
-Voice Feedback Module (Headless)
+Voice Feedback Module 
 Manages voice logic and generates text instructions for the client-side to speak.
 """
 import queue
 import random
 import time
+from pose_classifier import PoseClassifier
+
+
 
 class VoiceFeedback:
     def __init__(self):
@@ -59,8 +62,9 @@ class VoiceFeedback:
         self.speak(text)
 
     def speak_pose_feedback(self, pose_name: str, accuracy: float, duration: float):
-        if accuracy >= 85.0: self.speak(f"Perfect {pose_name}!")
-        elif accuracy >= 70.0: self.speak(f"Good {pose_name}.")
+        if accuracy >= 90.0: self.speak(f"Perfect {pose_name}!")
+        elif accuracy >= 80.0: self.speak(f"Good {pose_name}.")
+
 
     def speak_correction(self, feedback_text):
         now = time.time()
