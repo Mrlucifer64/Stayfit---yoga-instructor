@@ -25,7 +25,7 @@ app.config["SECRET_KEY"] = conf.SECRET_KEY
 
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
-login_manager.login_view = "login"
+login_manager.login_view = "login"  # type: ignore
 
 class SessionState:
     def __init__(self, user_id):
@@ -44,6 +44,7 @@ class SessionState:
         self.lock = threading.Lock()
         self.log_queue = Queue()
         self.log_thread = None
+        self.last_transition_time = 0
 
     def start_ai_engine(self):
         if not self.detector:
@@ -150,16 +151,20 @@ def generate_frames(user_id):
 
                 with state.lock:
                     if smooth and smooth != state.current_pose:
+                        current_time = time.time()
                         if state.current_pose and state.pose_start_time:
                             dur = time.time() - state.pose_start_time
                             state.log_queue.put({"user_id": state.user_id, "pose_name": state.current_pose, "duration_held": dur, "accuracy_score": state.last_accuracy,"pose_metrics": metrics,"feedback_notes": "Completed"})
-                            state.voice_feedback.speak_pose_feedback(state.current_pose, state.last_accuracy, dur)
-
-                        if state.current_pose:
-                            state.voice_feedback.speak_pose_transition(state.current_pose, smooth)
-                        else:
-                            state.voice_feedback.speak_pose_instruction(smooth)
-
+                            if dur > 3.0:
+                                state.voice_feedback.speak_pose_feedback(state.current_pose, state.last_accuracy, dur)
+                            
+                        if(current_time - state.last_transition_time > 3.0):       
+                            if state.current_pose:
+                                state.voice_feedback.speak_pose_transition(state.current_pose, smooth)
+                            else:
+                                state.voice_feedback.speak_pose_instruction(smooth)
+                                state.last_transition_time = current_time
+                                
                         state.previous_pose = state.current_pose
                         state.current_pose = smooth
                         state.pose_start_time = time.time()
@@ -235,7 +240,8 @@ def register():
     try:
         conn = pymysql.connect(**get_config().DB_CONFIG)
         cur = conn.cursor()
-        cur.execute("INSERT INTO users (username, email, password_hash) VALUES (%s,%s,%s)", (data["username"], data["email"], pw))
+        cur.execute("INSERT INTO users (username, email, password_hash, age, height, weight) VALUES (%s,%s,%s,%s,%s,%s)"
+                    ,(data["username"], data["email"], pw, data["age"], data["height"], data["weight"]))
         conn.commit()
         conn.close()
         return jsonify({"status": "success"})
@@ -248,7 +254,7 @@ def login():
     try:
         conn = pymysql.connect(**get_config().DB_CONFIG)
         cur = conn.cursor(pymysql.cursors.DictCursor)
-        cur.execute("SELECT * FROM users WHERE username=%s", (data["username"],))
+        cur.execute("SELECT * FROM users WHERE username=%s", (data["username"]))
         user = cur.fetchone()
         conn.close()
         if user and bcrypt.check_password_hash(user["password_hash"], data["password"]):
@@ -271,4 +277,4 @@ def get_progress():
 
 if __name__ == '__main__':
     initialize_components()
-    app.run(debug=True, host='0.0.0.0', port=8080, threaded=True)
+    app.run(debug=True, host='0.0.0.0', port=8080, threaded=True, use_reloader=False)

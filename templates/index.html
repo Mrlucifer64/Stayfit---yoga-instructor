@@ -252,8 +252,10 @@ if (themeBtn) {
     });
 }
 
+//--- VOICE ENGINE ---
+
 const synth = window.speechSynthesis;
-let voiceQueue = [];
+let pendingmessages = null;
 let isSpeaking = false;
 let lastSpokenText = "";
 let voices = [];
@@ -264,40 +266,49 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = loadVoices;
 }
 
-function processQueue() {
-    if (isSpeaking || voiceQueue.length === 0) return;
+function speakNext() {
+    if (!pendingMessage) {
+        isSpeaking = false;
+        return;
+    }
 
-    const text = voiceQueue.shift();
+    const text = pendingMessage;
+    pendingMessage = null; 
     isSpeaking = true;
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.9;
-    const preferred = voices.find(v => v.name.includes('Female') || v.name.includes('Google US English'));
+    utterance.rate = 1.0; 
+    
+    const preferred = voices.find(v => v.name.includes('Google US English') || v.name.includes('Female'));
     if (preferred) utterance.voice = preferred;
 
     utterance.onend = () => {
-        isSpeaking = false;
-        setTimeout(processQueue, 300);
+        speakNext(); 
     };
-    utterance.onerror = () => { isSpeaking = false; processQueue(); };
+    
+    utterance.onerror = () => {
+        isSpeaking = false;
+    };
 
     synth.speak(utterance);
 }
 
 function speakText(text, priority = false) {
-    if (!text || text === lastSpokenText) return;
+  if (!text || text === lastSpokenText) return;
 
-    if (priority) {
-        synth.cancel();
-        voiceQueue = [text];
-        isSpeaking = false;
-        processQueue();
-    } else {
-        voiceQueue.push(text);
-        processQueue();
+
+  pendingMessage = text;
+  lastSpokenText = text;
+
+  if (priority) {
+    synth.cancel();
+    isSpeaking = false;
+    speakNext();
+    } else if (!isSpeaking) {
+        isSpeaking = true;
+        speakNext();
     }
-    lastSpokenText = text;
-    setTimeout(() => { lastSpokenText = ""; }, 4000);
+    setTimeout(() => { lastSpokenText = ""; }, 3000);
 }
 
 function showToast(msg) {
@@ -372,7 +383,9 @@ async function updateStats() {
     statPose.textContent = data.current_pose || '—';
     timerEl.textContent = (data.duration || 0.0).toFixed(1);
     statDuration.textContent = (data.duration || 0.0).toFixed(1) + " s";
-    if (data.voice) speakText(data.voice, false);
+    if (data.voice) {
+      speakText(data.voice, false);
+    }
   }
 }
 

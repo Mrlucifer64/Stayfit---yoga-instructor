@@ -268,7 +268,7 @@ form.addEventListener("submit", async (e) => {
         weight: Number(document.getElementById("weight").value)
     };
 
-    if (!data.username || !data.email || !data.password) {
+    if (!data.username || !data.email || !data.password || !data.age || !data.height || !data.weight) {
         errorMsg.textContent = "Please fill all required fields.";
         return;
     }
